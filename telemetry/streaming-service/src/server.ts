@@ -11,6 +11,16 @@ const WS_PORT = 8080;
 const tcpServer = net.createServer();
 const websocketServer = new WebSocketServer({ port: WS_PORT });
 
+const SAFE_LOW = 20;
+const SAFE_HIGH = 80;
+
+const DATA_INTERVAL = 500;
+const DANGER_ALLOWANCES = 3;
+const DANGER_SPAN = 5000;
+
+let dangerList : number[] = [];
+let dangerIndex : number = 0;
+
 tcpServer.on("connection", (socket) => {
   console.log("TCP client connected");
 
@@ -26,6 +36,34 @@ tcpServer.on("connection", (socket) => {
     }
 
     const jsonData: VehicleData = JSON.parse(msgReceived);
+
+    if (jsonData.battery_temperature < SAFE_LOW || jsonData.battery_temperature > SAFE_HIGH) {
+      dangerList.push(dangerIndex);
+    }
+
+    if (dangerList.length > 0) {
+
+      if (dangerList.length == DANGER_ALLOWANCES) {
+        console.log("ERROR occured at: " + jsonData.timestamp);
+        console.log("Too many danger values observed within the last " + DANGER_SPAN + "ms");
+        dangerIndex = DANGER_SPAN / DATA_INTERVAL;
+      }
+
+      if (dangerIndex >= DANGER_SPAN / DATA_INTERVAL) {
+        dangerList.shift();
+        if (dangerList.length > 0) {
+          let newFirstDanger = dangerList[0];
+          dangerList = dangerList.map((value) => {
+            return value - newFirstDanger;
+          });
+          dangerIndex = dangerIndex - newFirstDanger;
+        } else {
+          dangerIndex = -1;
+        }
+      }
+
+      dangerIndex += 1;
+    }
 
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
