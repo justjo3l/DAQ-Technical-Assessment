@@ -15,14 +15,22 @@ tcpServer.on("connection", (socket) => {
   console.log("TCP client connected");
 
   socket.on("data", (msg) => {
-    console.log(`Received: ${msg.toString()}`);
+    let msgReceived = msg.toString();
 
-    const jsonData: VehicleData = JSON.parse(msg.toString());
+    console.log(`Received: ${msgReceived}`);
+
+
+    if (msgReceived[msgReceived.length - 1] === msgReceived[msgReceived.length - 2]) {
+      msgReceived = msgReceived.slice(0, -1);
+      console.log(`Corrected to: ${msgReceived}`);
+    }
+
+    const jsonData: VehicleData = JSON.parse(msgReceived);
 
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(msg.toString());
+        client.send(msgReceived);
       }
     });
   });
