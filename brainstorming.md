@@ -6,7 +6,9 @@ This file is used to document your thoughts, approaches and research conducted a
 
 ## Telemetry
 
-1) Upon observation, we can see that the format of JSON data received is incorrect sometimes, and hence causes the streaming service to crash. To counteract this, there are two approaches we can take:
+### Task 1
+
+Upon observation, we can see that the format of JSON data received is incorrect sometimes, and hence causes the streaming service to crash. To counteract this, there are two approaches we can take:
 - Identify, the corrupt data and then ignore it. This is a safety-based approach, as any incorrect form of data could threaten the security of the entire application.
 - Correct the data received by removing the additional '}' received from the data-emulator.
 
