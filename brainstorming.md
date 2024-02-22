@@ -31,4 +31,10 @@ The list will always contain the indexes of occurences within a span of 5 second
 
 Using this, we can print an error message when the list size exceeds 3, ensuring an error condition.
 
+### Task 3
+
+Implementing the change in color is very simple, as we can just change the color of the text in the styles based on the temperature value.
+
+Furthermore to expand on this and to improve flexibility and appearance, I plan on implementing a switch to toggle the color display mode. This is because personally the colors may seem distractive in certain scenarios. But it definitely would be really useful in certain other scenarios. This is why the app may benefit from a togglable switch to alternate between the modes.
+
 ## Cloud
