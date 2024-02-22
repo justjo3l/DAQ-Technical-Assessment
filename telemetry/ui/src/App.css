@@ -30,3 +30,8 @@
   font-size: calc(25px + 2vmin);
 }
 
+.unit {
+  color: white;
+  font-size: calc(15px + 2vmin);
+}
+

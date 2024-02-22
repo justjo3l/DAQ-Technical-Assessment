@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import LiveValue from "./live_value";
 import RedbackLogo from "./redback_logo.jpg";
 import "./App.css";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+
+import ColorSwitch from "./Components/ColorSwitch";
 
 const WS_URL = "ws://localhost:8080";
 
@@ -10,6 +12,11 @@ interface VehicleData {
   battery_temperature: number;
   timestamp: number;
 }
+
+export const ColorModeContext = createContext({
+  colorMode: false,
+  setColorMode: (mode: boolean) => {},
+});
 
 function App() {
   const [temperature, setTemperature] = useState<number>(0);
@@ -21,6 +28,8 @@ function App() {
       share: false,
       shouldReconnect: () => true,
     });
+
+  const [colorMode, setColorMode] = useState(false);
 
   useEffect(() => {
     switch (readyState) {
@@ -52,7 +61,10 @@ function App() {
           alt="Redback Racing Logo"
         />
         <p className="value-title">Live Battery Temperature</p>
-        <LiveValue temp={temperature} />
+        <ColorModeContext.Provider value={{colorMode, setColorMode}}>
+          <LiveValue temp={temperature} />
+          <ColorSwitch />
+        </ColorModeContext.Provider>
       </header>
     </div>
   );
